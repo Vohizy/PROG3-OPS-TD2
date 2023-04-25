@@ -1,0 +1,33 @@
+Parameters:
+  Env:
+    Type: String
+  DBUsername:
+    Type: String
+    Default: admin
+    Description: The username for the database administrator.
+
+  DBPassword:
+    Type: String
+    Description: The password for the database administrator.
+
+Resources:
+  Database:
+    Type: AWS::RDS::DBInstance
+    DeletionPolicy: Retain
+    Properties:
+      DBName: Data
+      AllocatedStorage: "5"
+      DBInstanceClass: db.t2.micro
+      Engine: postgres
+      MasterUsername: !Ref DBUsername
+      MasterUserPassword: !Ref DBPassword
+  DatabaseSSM:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: !Join ["", [OPS-TD2, !Ref DBName]]
+      Type: String
+       Value: !Sub "jdbc:postgresql://${RDSDatabase.Endpoint.Address}:${RDSDatabase.Endpoint.Port}/${RDSDatabase.DBName}"
+
+Outputs:
+  DatabaseSSM:
+    Value: !Ref DatabaseSSM
