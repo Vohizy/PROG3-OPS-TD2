@@ -26,7 +26,7 @@ Resources:
     Properties:
       Name: !Join ["", [OPS-TD2, !Ref DBName]]
       Type: String
-       Value: !Sub "jdbc:postgresql://${RDSDatabase.Endpoint.Address}:${RDSDatabase.Endpoint.Port}/${RDSDatabase.DBName}"
+       Value: !Sub "jdbc:postgresql://${Database.Endpoint.Address}:${Database.Endpoint.Port}/${Database.DBName}"
 
 Outputs:
   DatabaseSSM:
