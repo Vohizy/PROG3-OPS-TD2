@@ -36,9 +36,8 @@ jobs:
       - name: Deploy storage stack
         uses: aws-actions/aws-cloudformation-github-deploy@v1
         with:
-          name: ${{ env.branch_env }}-storage-hei-admin-api
+          name: storage-TD-OPS
           template: aws-cf-stacks/storage.yml
           tags: '[ { "Key": "app", "Value": "TD-OPS" }, { "Key": "env", "Value": "${{ env.branch_env }}" } ]'
           capabilities: CAPABILITY_NAMED_IAM
           no-fail-on-empty-changeset: "1"
-          parameter-overrides: "Env=${{ env.branch_env }}"
