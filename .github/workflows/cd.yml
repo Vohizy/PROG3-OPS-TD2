@@ -6,9 +6,9 @@ name: CI
 on:
   # Triggers the workflow on push or pull request events but only for the "main" branch
   push:
-    branches: [ "main" ]
+    branches: ["main"]
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -20,6 +20,9 @@ jobs:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
 
+    env:
+      AWS_REGION: eu-west-3
+
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
@@ -29,6 +32,13 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: <REGION>
-      - name: Deploy CloudFormation stack
-        run: aws cloudformation deploy --stack-name <STACK_NAME> --template-file <PATH_TO_TEMPLATE> --capabilities CAPABILITY_NAMED_IAM --parameter-overrides <PARAMETER_OVERRIDES>
+          aws-region: ${{env.AWS_REGION}}
+      - name: Deploy storage stack
+        uses: aws-actions/aws-cloudformation-github-deploy@v1
+        with:
+          name: ${{ env.branch_env }}-storage-hei-admin-api
+          template: aws-cf-stacks/storage.yml
+          tags: '[ { "Key": "app", "Value": "TD-OPS" }, { "Key": "env", "Value": "${{ env.branch_env }}" } ]'
+          capabilities: CAPABILITY_NAMED_IAM
+          no-fail-on-empty-changeset: "1"
+          parameter-overrides: "Env=${{ env.branch_env }}"
